@@ -1,0 +1,143 @@
+---
+title: "HVC Model"
+author: "Nivretta Thatra"
+date: "16/05/2017"
+output: github_document
+---
+
+```{r}
+
+library(ggplot2)
+library(gridExtra)
+
+```
+
+
+Initialize variables and vectors
+```{r}
+
+#time interval of one day
+dt = 1
+#total of 75 days
+tFinal = 75
+
+#an array of t value
+t = seq(0, tFinal, by= dt)
+
+b = c(1:length(t)) #an array of "breeding season" values
+progenitors = c(1:length(t)) #new stem cells & neural progenitor cells in VZ (express nestin)
+migrators = c(1:length(t)) #new daughters of neural progenitor cells that have begun to migrate to HVC (express doublecortin)
+newNeuronHVC = c(1:length(t)) #proportion of migrators that successfully get to HVC (express NeuN)
+neuronNumHVC = seq(200000, (tFinal+200000), by= dt) #total number of neurons in HVC
+apoptosisHVC = c(1:length(t)) #death in HVC
+proliferationVZ = c(1:length(t)) #proliferation in VZ
+migrationSuccess = c(1:length(t))
+apoptosis = c(1:length(t))
+preserveHVC = c(1:length(t))
+
+minVZ = 7800  #minimum number of newly proliferated cells in VZ during LD, taken from Reg I data
+migrationDuration = 10  #days
+changeDuration = 2  #days it takes to change from stem cell to migrator that expresses doublecortin
+incorporationSuccess = 0.5  #success of migrated neurons' incorporation
+
+
+```
+
+
+
+```{r}
+for (n in 1:(length(t))){ 
+    
+    if (t[n] < 15) { 
+        b[n] = 1 
+    } else if (t[n] >=15 & t[n] <= 45) { 
+        b[n] = 0 
+    } else {
+        b[n] = 1 } 
+
+
+    if (b[n] == 0 & t[n] >=16 & t[n] <=25) {
+        proliferationVZ[n] = 1.5  #rate of VZ prolif during LD --> SD
+    } else if (b[n] == 1 & t[n] >=46 & t[n] <=56) {
+        proliferationVZ[n] = 1.5  #rate of VZ prolif during SD --> LD
+    } else {
+        proliferationVZ[n] = 1 } #rate of VZ prolif during stable state
+    
+    
+    progenitors[n] = minVZ * proliferationVZ[n] 
+
+    if (b[n] == 1) { 
+        migrators[n] = (progenitors[n] * 0.5)  #neural progenitor daughters that migrate out during breeding condition
+    } else {
+        migrators[n] = (progenitors[n] * 0.5) }
+    
+    
+    if (b[n] == 1) { 
+        migrationSuccess[n] = 0.5  
+    } else {
+        migrationSuccess[n] = 0.47}
+    
+    newNeuronHVC[n] = migrators[n] * migrationSuccess[n]  
+
+    if (b[n] == 0 & t[n] >=16 & t[n] <=25) {
+        apoptosisHVC[n] = .0125  #apoptosis rate during LD-->SD   
+    } else if (b[n] == 1 & t[n] >=46 & t[n] <=56) {
+        #apoptosis rate during SD-->LD, less due to effect of testosterone
+        apoptosisHVC[n] = .0025  
+    } else {
+        apoptosisHVC[n] = .0049}  #apoptosis rate during stable state
+    
+    
+    #if b[n] == 0 && t[n] >=16 && t[n] <=25
+    #    preserveHVC[n] = 0  #T does not save neurons from death during LD-->SD   
+    #elseif b[n] == 1 && t[n] >=46 && t[n] <=56
+    #    preserveHVC[n] = .01  #T "saves" mature neurons in HVC from death during SD --> LD 
+    #else
+   #     preserveHVC[n] = 0  #during stable state
+   # end
+    
+    neuronNumHVC[n+1] = neuronNumHVC[n] + (newNeuronHVC[n] * incorporationSuccess) - (apoptosisHVC[n] * neuronNumHVC[n]) 
+    
+    apoptosis[n] = apoptosisHVC[n] * neuronNumHVC[n] 
+}
+
+```
+
+Plotting
+
+```{r}
+
+
+#subplot(5,1,1)  plot(b)  hold on
+#subplot(5,1,2)  
+ 
+qplot(seq_along(progenitors), progenitors) + xlab("0-15 end of LD, 16-45 SD, 46-75 LD") + ylab("number of progenitors in VZ")
+
+source("multiplot.R")
+graph <- multiplot(p1, p2, cols=2)
+
+plot(progenitors)
+ylabel('Number of Progenitor Cells in VZ')
+xlabel('0-15:LD                     16-46:SD                      46-75: LD')
+#subplot(5,1,3)  
+
+#subplot(5,1,4)  
+figure(2) 
+plot (newNeuronHVC) # hold on
+ylabel('HVC New Neuron Number')
+xlabel('0-15:LD                     16-46:SD                      46-75: LD')
+
+#subplot(5,1,5)  
+figure(3) 
+plot (neuronNumHVC) # hold on
+ylabel('HVC Total Neuron Number')
+xlabel('0-15:LD                     16-46:SD                      46-75: LD') 
+
+figure(4) 
+plot (apoptosis)
+ylabel('Density of Cell Death in HVC')
+xlabel('0-15:LD                     16-46:SD                      46-75: LD')
+
+
+```
+
