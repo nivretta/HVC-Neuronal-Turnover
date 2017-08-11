@@ -1,0 +1,30 @@
+---
+title: "Shiny Tutorial"
+author: "Nivretta Thatra"
+date: "7/20/2017"
+output: github_document
+---
+
+Following the Shiny tutorial by [Dan Atalli](http://stat545.com/shiny01_activity.html)
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r setup}
+
+install.packages("shiny")
+library(shiny)
+
+#runExample("01_hello")
+```
+
+
+```{r}
+
+ui <- fluidPage()
+server <- function(input, output) {}
+shinyApp(ui = ui, server = server)
+
+```
+

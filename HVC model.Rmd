@@ -107,36 +107,17 @@ Plotting
 
 ```{r}
 
+p1 <- qplot(seq_along(progenitors), progenitors) + xlab("0-15 end of LD, 16-45 SD, 46-75 LD") + ylab("number of progenitors in VZ")
 
-#subplot(5,1,1)  plot(b)  hold on
-#subplot(5,1,2)  
- 
-qplot(seq_along(progenitors), progenitors) + xlab("0-15 end of LD, 16-45 SD, 46-75 LD") + ylab("number of progenitors in VZ")
+p2 <- qplot(seq_along(newNeuronHVC), newNeuronHVC) + xlab("0-15 end of LD, 16-45 SD, 46-75 LD") + ylab("HVC New Neuron Number")
+
+p3 <- qplot(seq_along(neuronNumHVC), neuronNumHVC) + xlab("0-15 end of LD, 16-45 SD, 46-75 LD") + ylab("HVC Total Neuron Number")
+
+p4 <- qplot(seq_along(apoptosis), apoptosis) + xlab("0-15 end of LD, 16-45 SD, 46-75 LD") + ylab("Density of Cell Death in HVC")
+
 
 source("multiplot.R")
-graph <- multiplot(p1, p2, cols=2)
-
-plot(progenitors)
-ylabel('Number of Progenitor Cells in VZ')
-xlabel('0-15:LD                     16-46:SD                      46-75: LD')
-#subplot(5,1,3)  
-
-#subplot(5,1,4)  
-figure(2) 
-plot (newNeuronHVC) # hold on
-ylabel('HVC New Neuron Number')
-xlabel('0-15:LD                     16-46:SD                      46-75: LD')
-
-#subplot(5,1,5)  
-figure(3) 
-plot (neuronNumHVC) # hold on
-ylabel('HVC Total Neuron Number')
-xlabel('0-15:LD                     16-46:SD                      46-75: LD') 
-
-figure(4) 
-plot (apoptosis)
-ylabel('Density of Cell Death in HVC')
-xlabel('0-15:LD                     16-46:SD                      46-75: LD')
+graph <- multiplot(p1, p2, p3, p4, cols=2)
 
 
 ```
