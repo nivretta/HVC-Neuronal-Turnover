@@ -3,7 +3,9 @@
 ## Project by Nivretta (or Nivi) Thatra
 ### Pronunciations: *Niv-rith-ah* (or *Niv-ee*) 
 
-## [The Main Thing You Should Click On](https://github.com/nivretta/HVC-Neuronal-Turnover/blob/master/HVC_model.md) 
+## [Here is the Main Thing You Should Click On](https://github.com/nivretta/HVC-Neuronal-Turnover/blob/master/HVC_model.md) 
+
+## Quick intro:
 
 The neuroscientific community accepted the existence of adult neurogenesis in the 1980s -- and labcoaters worldwide have been tripping over themselves with excitement ever since. Adult neurogenesis! The cure to all neurodegenerative disorders! Its effects on behaviors must be drastic! And memory! Sleep! Learning! TBI! Much of this hoopla is in fact only hoopla. 
 But for songbirds, adult neurogenesis (and the parallel pruning of adult born neurons) is key in their breeding behaviors. Adult neurogenesis contributes neurons to brain nuclei in certain avian species -- here we focus on Gambel's White Crowned Sparrows (GWS) -- allowing them to sing songs for attraction and territorial claiming purposes. This is a highly energy intensive process. The field postulates that in order to preserve resources in nonbreeding conditions, these same species show modulations in adult neurogenesis to keep their song nuclei smaller. 
