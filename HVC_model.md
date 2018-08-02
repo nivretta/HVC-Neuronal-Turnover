@@ -8,8 +8,7 @@ library(ggplot2)
 library(gridExtra)
 ```
 
-Initialize variables and vectors
-================================
+### Initialize variables and vectors
 
 ``` r
 #time interval of one day
@@ -33,13 +32,16 @@ preserveHVC = c(1:length(t))
 
 minVZ = 7800  #minimum number of newly proliferated cells in VZ during LD, taken from Reg I data
 migrationDuration = 10  # duration of migration in days
-changeDuration = 2  #days it takes to change from stem cell to migrator that expresses doublecortin
 incorporationSuccess = 0.5  #success of migrated neurons' incorporation
+
+##unused variables but useful to know
+#changeDuration = 2  #days it takes to change from stem cell to migrator that expresses doublecortin
 ```
 
 ``` r
 for (n in 1:(length(t))){ 
     
+    #assign 'breeding seasons' to time points 
     if (t[n] < 15) { 
         b[n] = 1 
     } else if (t[n] >=15 & t[n] <= 45) { 
@@ -47,6 +49,7 @@ for (n in 1:(length(t))){
     } else {
         b[n] = 1 } 
 
+    #days 16-25 and 46-56 are 'plastic state' days, ie when the neural circuitry is transitioning between seasons
     if (b[n] == 0 & t[n] >=16 & t[n] <=25) {
         proliferationVZ[n] = 1.5  #rate of VZ prolif during LD --> SD
     } else if (b[n] == 1 & t[n] >=46 & t[n] <=56) {
@@ -57,12 +60,13 @@ for (n in 1:(length(t))){
     
     progenitors[n] = minVZ * proliferationVZ[n] 
 
+    #if we hyopthesize that the number of progenitors' daughters that migrate out of VZ is affected by breeding season, we can test that here
     if (b[n] == 1) { 
         migrators[n] = (progenitors[n] * 0.5)  #neural progenitor daughters that migrate out during breeding condition
     } else {
         migrators[n] = (progenitors[n] * 0.5) }
     
-    
+    #if we hypothesize that some migrating progenitor daughters don't make it to HVC as a function of breeding season, we can test that here 
     if (b[n] == 1) { 
         migrationSuccess[n] = 0.5  
     } else {
@@ -70,6 +74,7 @@ for (n in 1:(length(t))){
     
     newNeuronHVC[n] = migrators[n] * migrationSuccess[n]  
 
+    #Effect of breeding season on apoptosis
     if (b[n] == 0 & t[n] >=16 & t[n] <=25) {
         apoptosisHVC[n] = .0125  #apoptosis rate during LD-->SD   
     } else if (b[n] == 1 & t[n] >=46 & t[n] <=56) {
@@ -85,7 +90,6 @@ for (n in 1:(length(t))){
     #    preserveHVC[n] = .01  #T "saves" mature neurons in HVC from death during SD --> LD 
     #else
    #     preserveHVC[n] = 0  #during stable state
-   # end
     
     neuronNumHVC[n+1] = neuronNumHVC[n] + (newNeuronHVC[n] * incorporationSuccess) - (apoptosisHVC[n] * neuronNumHVC[n]) 
     
@@ -93,8 +97,7 @@ for (n in 1:(length(t))){
 }
 ```
 
-Plotting
-========
+### Plotting
 
 ``` r
 p1 <- qplot(seq_along(progenitors), progenitors) + xlab("0-15 end of LD, 16-45 SD, 46-75 LD") + ylab("number of progenitors in VZ")
@@ -111,9 +114,3 @@ graph <- multiplot(p1, p2, p3, p4, cols=2)
 ```
 
 ![](HVC_model_files/figure-markdown_github/unnamed-chunk-4-1.png)
-
-``` r
-multiplot(p1, p2, p3, p4, cols=2)
-```
-
-![](HVC_model_files/figure-markdown_github/unnamed-chunk-4-2.png)
